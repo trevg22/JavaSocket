@@ -19,14 +19,14 @@ repositories {
     mavenCentral()
 }
 
-task App2(type: JavaExec){
+task rec(type: JavaExec){
     classpath = sourceSets.main.runtimeClasspath
-    main='App2'
+    main='Receiver'
 }
 
-task App(type: JavaExec){
+task send(type: JavaExec){
     classpath = sourceSets.main.runtimeClasspath
-    main='App'
+    main='Sender'
 }
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
@@ -37,5 +37,5 @@ dependencies {
 }
 
 // Define the main class for the application
-mainClassName = 'App'
+mainClassName = 'Receiver'
 
