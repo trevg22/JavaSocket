@@ -8,7 +8,7 @@ public class Receiver {
     System.out.println(new Receiver().getGreeting());
 
     try (Connection conn = new Connection()) {
-      conn.Bind(12345);
+      conn.Bind("eth0",12345);
       String msg = conn.Receive();
       System.out.println("Received message: " + msg);
 

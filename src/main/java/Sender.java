@@ -13,7 +13,7 @@ public class Sender {
 
     try (Connection conn = new Connection()) {
 
-      conn.Send(message, "localhost", port);
+      conn.Send(message, "172.27.57.82", port);
 
       System.out.println("Sent message: " + message);
 

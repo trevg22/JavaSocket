@@ -2,6 +2,7 @@ package connection;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Enumeration;
 
 public class Connection implements AutoCloseable {
 
@@ -21,13 +22,22 @@ public class Connection implements AutoCloseable {
       System.out.println("Socket is closed.");
     }
   }
-  public void Bind(int port) {
-    if (!_sock.isClosed()) {
+
+  public void Bind(String iname, int port) {
+    
+    if(_sock!=null &&!_sock.isClosed())
+  {
       _sock.close();
     }
-
     try {
-      this._sock = new DatagramSocket(port);
+      InetAddress addr = GetIPv4Address(iname);
+      if (addr == null) {
+        System.out.println("interface of name " + iname + " does note exist");
+        return;
+      }
+      InetSocketAddress sock_addr = new InetSocketAddress(addr, port);
+      _sock=new DatagramSocket(sock_addr);
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -45,6 +55,7 @@ public class Connection implements AutoCloseable {
     String msg = new String(rec_packet.getData(), 0, rec_packet.getLength());
     return msg;
   }
+
   public void Send(String msg, String iname, int port) {
     try {
       byte[] data = msg.getBytes();
@@ -55,5 +66,25 @@ public class Connection implements AutoCloseable {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private static InetAddress GetIPv4Address(String iname)
+      throws SocketException {
+    NetworkInterface iface = NetworkInterface.getByName(iname);
+
+    if (iface == null) {
+      return null; // Network interface not found
+    }
+
+    Enumeration<InetAddress> addresses = iface.getInetAddresses();
+
+    while (addresses.hasMoreElements()) {
+      InetAddress address = addresses.nextElement();
+      if (address instanceof Inet4Address) { // Check if it's an IPv4 address
+        return address;
+      }
+    }
+
+    return null; // No IPv4 address found
   }
 }
