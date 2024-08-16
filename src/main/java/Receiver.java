@@ -8,8 +8,8 @@ public class Receiver {
     System.out.println(new Receiver().getGreeting());
 
     try (Connection conn = new Connection()) {
-      conn.Bind("eth0",12345);
-      String msg = conn.Receive();
+      conn.bindByName("eth0", 12345);
+      String msg = conn.receive();
       System.out.println("Received message: " + msg);
 
     } catch (Exception e) {

@@ -23,26 +23,35 @@ public class Connection implements AutoCloseable {
     }
   }
 
-  public void Bind(String iname, int port) {
-    
-    if(_sock!=null &&!_sock.isClosed())
-  {
+  public void bindByIp(InetAddress ip, int port) {
+    if (_sock != null && !_sock.isClosed()) {
       _sock.close();
     }
     try {
-      InetAddress addr = GetIPv4Address(iname);
-      if (addr == null) {
-        System.out.println("interface of name " + iname + " does note exist");
-        return;
-      }
-      InetSocketAddress sock_addr = new InetSocketAddress(addr, port);
-      _sock=new DatagramSocket(sock_addr);
-
+      InetSocketAddress sock_addr = new InetSocketAddress(ip, port);
+      _sock = new DatagramSocket(sock_addr);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
-  public String Receive() {
+  public void bindByName(String iname, int port) {
+
+    if (_sock != null && !_sock.isClosed()) {
+      _sock.close();
+    }
+    try {
+      InetAddress ip = getIPv4Address(iname);
+
+      bindByIp(ip, port);
+      if (ip == null) {
+        System.out.println("interface of name " + iname + " does note exist");
+        return;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  public String receive() {
 
     byte[] rec_data = new byte[1024];
     DatagramPacket rec_packet = new DatagramPacket(rec_data, rec_data.length);
@@ -56,19 +65,18 @@ public class Connection implements AutoCloseable {
     return msg;
   }
 
-  public void Send(String msg, String iname, int port) {
+  public void send(String msg, InetSocketAddress dest) {
     try {
       byte[] data = msg.getBytes();
-      InetAddress dest_ip = InetAddress.getByName(iname);
-      DatagramPacket packet =
-          new DatagramPacket(data, data.length, dest_ip, port);
+      // InetAddress dest_ip = InetAddress.getByName(iname);
+      DatagramPacket packet = new DatagramPacket(data, data.length, dest);
       _sock.send(packet);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  private static InetAddress GetIPv4Address(String iname)
+  private static InetAddress getIPv4Address(String iname)
       throws SocketException {
     NetworkInterface iface = NetworkInterface.getByName(iname);
 

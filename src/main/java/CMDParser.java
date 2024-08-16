@@ -1,9 +1,10 @@
+package cmdparser;
 import java.net.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CMDParser {
-  InetSocketAddress argToIPV4(String arg) {
+  public static InetSocketAddress argToIPV4(String arg) {
     String regex =
         "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}):([0-9]{1,5})$";
     Pattern pattern = Pattern.compile(regex);
